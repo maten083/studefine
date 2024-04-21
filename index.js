@@ -10,13 +10,16 @@ const authRouth = require('./routes/authRoutes');
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+//test endpoint
 app.get('/',(req, res)=>{
     res.send('Eme csodálatos szöveg egy GET endpoint');
 });
 
+
+
 app.use('/auth', authRouth) //Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
-
-
 
 app.listen(port, ()=> {
     console.log(`A szerver elvileg fut itt--> http://localhost:${port}`)

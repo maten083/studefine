@@ -14,4 +14,17 @@ const getUser = async (email, password) => {
     return result.rows[0];
 };
 
-module.exports = { createUser, getUser, pool};
+//token lekéréséhez egyedi cím alapján kérjük vissza a usert
+const getUserByEmail = async (email) => {
+    const query = 'SELECT * FROM users WHERE email = $1';
+    const result = await pool.query(query, [email]);
+    return result.rows[0];
+};
+
+const updateToken = async (token,email) => {
+    const query = 'UPDATE users SET token = $1 WHERE email = $2' ;
+    await pool.query(query, [token,email]);
+}
+
+
+module.exports = { createUser, getUser,getUserByEmail,updateToken, pool};
