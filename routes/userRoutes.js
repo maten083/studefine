@@ -1,9 +1,9 @@
 //Ez a mappa tartalmazza az útvonalak kezeléséhez kapcsolódó fájlokat.(log in / sign up)
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const userController = require('../controllers/userController');
+const authToken = require('../helpers/authToken')
 
-router.post('/signup', authController.signup);
-router.post('/login', authController.login);
+router.get('/verifyToken', authToken, userController.verifyToken);
 
 module.exports = router;

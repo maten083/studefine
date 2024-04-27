@@ -1,12 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const dotenv = require('dotenv');
 const port = 8080;
+
+dotenv.config({
+    path: './secret.env'
+});
 
 const cors = require('cors');
 app.use(cors({origin:'http://localhost:3000'}))
 
-const authRouth = require('./routes/authRoutes');
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,9 +24,8 @@ app.get('/',(req, res)=>{
     res.send('Eme csodálatos szöveg egy GET endpoint');
 });
 
-
-
-app.use('/auth', authRouth) //Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
+app.use('/auth', authRoutes) //Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
+app.use('/user', userRoutes);
 
 app.listen(port, ()=> {
     console.log(`A szerver elvileg fut itt--> http://localhost:${port}`)
