@@ -5,14 +5,13 @@ const {JwtHelper} = require("../helpers/jwtHelper");
 
 
 const createTopic = async (req, res) => {
-
     try {
         const topicData = req.body;
         const userByToken = await JwtHelper.getUserdataFromHeader(req);
-        console.log('result: ',userByToken, 'headers: ', req.headers);
+        console.log('result: ', userByToken, 'headers: ', req.headers);
 
         // A leírás lehet üres, mivel később ez még módostható --> így létrejött egy üres topic
-        if (!topicData.name|| !userByToken.id) {
+        if (!topicData.name || !userByToken.id) {
             throw new Error("Valamelyik mező üres.");
         }
 
@@ -25,15 +24,47 @@ const createTopic = async (req, res) => {
         }
 
         // Új topic létrehozása
-        const newTopic = await  dbManager.createTopic(topicData.name, topicData.definition);
+        const newTopic = await dbManager.createTopic(topicData.name, topicData.definition);
         // kapcsolótáblába szintén felvesszük az adatokat, hogy kihez tartozik.
-        await dbManager.createUserTopic(userByToken.id,newTopic.id);
+        await dbManager.createUserTopic(userByToken.id, newTopic.id);
 
 
-        res.status(201).json({ message: `Az ID:${newTopic.id} , ${newTopic.name} topic sikeresen létrejött.` });
-    } catch(err){
-        res.status(500).json({ error: err.message })
+        res.status(201).json({message: `Az ID:${newTopic.id} , ${newTopic.name} topic sikeresen létrejött.`});
+    } catch (err) {
+        res.status(500).json({error: err.message})
     }
-};
 
-module.exports = {createTopic}
+}
+
+const createChildTopic = async (req, res) => {
+    const parentTopicId = req.params?.id // Ha létezik parentTopic
+    console.log("res:",req.params);
+    try {
+        const topicData = req.body;
+
+
+        // A leírás lehet üres, mivel később ez még módostható --> így létrejött egy üres topic
+        if (!topicData.name ) {
+            throw new Error("A topicnak nincs neve.");
+        }
+
+        const dbManager = new DbManager();
+
+        //Ha nincs ilyen ID-val Topic akkor error
+        if (!await dbManager.getTopic(parentTopicId)) {
+            throw new Error("Nem létező Topics.");
+        }
+
+        // Új topic létrehozása
+        const newTopic = await dbManager.createTopic(topicData.name, topicData.definition);
+        // kapcsolótáblába szintén felvesszük az adatokat, hogy kihez tartozik.
+        await dbManager.createTopicRelation(parentTopicId, newTopic.id);
+
+
+        res.status(201).json({message: `Az ID:${newTopic.id} , ${newTopic.name} topic sikeresen létrejött.`});
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+}
+
+module.exports = {createTopic, createChildTopic}

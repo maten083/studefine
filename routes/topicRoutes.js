@@ -4,5 +4,7 @@ const router = express.Router();
 const topicController = require('../controllers/topicController');
 
 router.post('/', topicController.createTopic);
+router.post('/:id', topicController.createChildTopic);
+
 
 module.exports = router;

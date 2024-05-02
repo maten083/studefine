@@ -97,6 +97,13 @@ class DbManager {
             )`;
             await this.#pool.query(createTableQuery);
             console.log('UserTopic kapcsolat tábla létrehozása');
+
+            createTableQuery = `CREATE TABLE IF NOT EXISTS topicrelation (
+                parent_id SERIAL REFERENCES topics(id),
+                child_id SERIAL REFERENCES topics(id)
+            )`;
+            await this.#pool.query(createTableQuery);
+            console.log('topicRelation kapcsolat tábla létrehozása');
         } catch (error) {
             console.error('Hiba történt a tábla létrehozása során', error);
         }
@@ -158,9 +165,15 @@ class DbManager {
         return result.rows[0];
     };
 
-    async getTopic(email, password) {
-        const query = 'SELECT id, username, email FROM users WHERE email = $1 AND password = $2';
-        const result = await this.query(query, [email, password]);
+    async createTopicRelation(parent_id, child_id) {
+        const query = 'INSERT INTO topicrelation(parent_id, child_id) VALUES ($1, $2)';
+        const result = await this.query(query, [parent_id, child_id]);
+        return result.rows[0];
+    };
+
+    async getTopic(id) {
+        const query = 'SELECT * FROM topics WHERE id = $1';
+        const result = await this.query(query, [id]);
         return result.rows[0];
     };
 
