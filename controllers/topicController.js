@@ -38,7 +38,6 @@ const createTopic = async (req, res) => {
 
 const createChildTopic = async (req, res) => {
     const parentTopicId = req.params?.id // Ha létezik parentTopic
-    console.log("res:",req.params);
     try {
         const topicData = req.body;
 
@@ -67,4 +66,33 @@ const createChildTopic = async (req, res) => {
     }
 }
 
-module.exports = {createTopic, createChildTopic}
+const getTopicById = async (req, res) => {
+    try {
+
+        const dbManager = new DbManager();
+        const topic = await dbManager.getTopic(req.params?.id);
+
+        res.status(200).json(topic);
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+
+}
+
+const updateTopic = async (req, res) => {
+    try {
+
+        const dbManager = new DbManager();
+        const id = req.params.id
+        const {name,definition} = req.body
+        console.log("name:", name, definition, id)
+        const updatedTopic = await dbManager.updateTopic(name,definition,id);
+
+        res.status(200).json(updatedTopic);
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+
+}
+
+module.exports = {createTopic, createChildTopic, getTopicById, updateTopic}

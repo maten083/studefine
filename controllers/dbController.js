@@ -85,7 +85,7 @@ class DbManager {
 
             createTableQuery = `CREATE TABLE IF NOT EXISTS topics (
                 id SERIAL PRIMARY KEY,
-                name VARCHAR(100) UNIQUE NOT NULL,
+                name VARCHAR(100) NOT NULL,
                 definition TEXT
             )`;
             await this.#pool.query(createTableQuery);
@@ -104,7 +104,8 @@ class DbManager {
             )`;
             await this.#pool.query(createTableQuery);
             console.log('topicRelation kapcsolat tábla létrehozása');
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Hiba történt a tábla létrehozása során', error);
         }
     }
@@ -151,6 +152,7 @@ class DbManager {
         return result.rows[0];
     };
 
+    //Topic műveletek
 
     async createTopic(name, definition) {
         const query = 'INSERT INTO topics(name, definition) VALUES ($1, $2) RETURNING * ';
@@ -174,6 +176,12 @@ class DbManager {
     async getTopic(id) {
         const query = 'SELECT * FROM topics WHERE id = $1';
         const result = await this.query(query, [id]);
+        return result.rows[0];
+    };
+
+    async updateTopic(newName,newDefinition,id) {
+        const query = 'UPDATE topics SET name = $1 , definition  = $2 WHERE id = $3 RETURNING *';
+        const result = await this.query(query, [newName,newDefinition,id]);
         return result.rows[0];
     };
 
