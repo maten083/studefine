@@ -14,6 +14,10 @@ class JwtHelper {
             })
         });
     }
+
+    static getUserdataFromHeader(req){
+        return this.verifyToken(req.headers['authorization'].split(' ')[1])
+    }
 }
 
 module.exports = { JwtHelper }

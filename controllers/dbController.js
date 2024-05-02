@@ -82,6 +82,21 @@ class DbManager {
             )`;
             await this.#pool.query(createTableQuery);
             console.log('Membership kapcsolat tábla létrehozása');
+
+            createTableQuery = `CREATE TABLE IF NOT EXISTS topics (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) UNIQUE NOT NULL,
+                definition TEXT
+            )`;
+            await this.#pool.query(createTableQuery);
+            console.log('Topics tábla létrehozása');
+
+            createTableQuery = `CREATE TABLE IF NOT EXISTS usertopic (
+                user_id SERIAL REFERENCES users(id),
+                topic_id SERIAL REFERENCES topics(id)
+            )`;
+            await this.#pool.query(createTableQuery);
+            console.log('UserTopic kapcsolat tábla létrehozása');
         } catch (error) {
             console.error('Hiba történt a tábla létrehozása során', error);
         }
@@ -118,6 +133,32 @@ class DbManager {
     }
 
     async getUser(email, password) {
+        const query = 'SELECT id, username, email FROM users WHERE email = $1 AND password = $2';
+        const result = await this.query(query, [email, password]);
+        return result.rows[0];
+    };
+
+    async getUserById(id) {
+        const query = 'SELECT * FROM users WHERE id = $1';
+        const result = await this.query(query, [id]);
+        return result.rows[0];
+    };
+
+
+    async createTopic(name, definition) {
+        const query = 'INSERT INTO topics(name, definition) VALUES ($1, $2) RETURNING * ';
+        const result = await this.query(query, [name, definition]);
+        return result.rows[0];
+    };
+
+    //Kapcsolótábla adatainak beszúrása
+    async createUserTopic(user_id, topic_id) {
+        const query = 'INSERT INTO usertopic(user_id, topic_id) VALUES ($1, $2)';
+        const result = await this.query(query, [user_id, topic_id]);
+        return result.rows[0];
+    };
+
+    async getTopic(email, password) {
         const query = 'SELECT id, username, email FROM users WHERE email = $1 AND password = $2';
         const result = await this.query(query, [email, password]);
         return result.rows[0];
@@ -166,6 +207,13 @@ pool.query(`SELECT * FROM users`,(err,res)=>{
     }
     pool.end;
 });
+
+
+
+topics
+id, name, definition
+userTopics
+user_id REF users (id), topic_id ref topics (id)
 */
 module.exports = {DbManager};
 
