@@ -15,7 +15,8 @@ app.use(cors({origin:'http://localhost:3000'}))
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const topicRoutes = require('./routes/topicRoutes');
-
+//const phraseRoutes = require('./routes/phraseRoutes');
+//const plainDefinitionRoutes = require('./routes/plainDefinitionRoutes');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,17 +24,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //test endpoint
 app.get('/',(req, res)=>{
-    res.send('Eme csodálatos szöveg egy GET endpoint');
+    res.send('GET endpoint - welcome');
 });
 
 app.use('/auth', authRoutes); //Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
 app.use('/user', userRoutes);
 app.use('/topics',topicRoutes);
+//app.use('/phrases',phraseRoutes);
+//app.use('/plainDefinition',plainDefinitionRoutes);
 
 app.listen(port, ()=> {
-    console.log(`A szerver elvileg fut itt--> http://localhost:${port}`)
+    console.log(`A szerver itt fut--> http://localhost:${port}`)
 });
 
 app.use((req,res)=>{
-    res.status(404).send("valami notGood");
+    res.status(404).send("valami nem jó - 404");
 });
