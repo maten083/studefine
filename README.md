@@ -7,5 +7,5 @@
    - ***PSQL***-t is telepítenünk kell ugyan is a backend lokális psql adatbázisra csatlakozik:[PostgreSql Download](https://www.postgresql.org/download/). Az adatbázis telepítésénél minden maradjon alapértelmezett értéken, felhasználó létrehozásánál csak jelszót adjunk meg neki ami `asdf`. A backend ezzel a jelszóval állítja fel az adatbázis kapcsolatot.
    - ***POSTMAN*** a könnyű és látványos tesztelés érdekében kerüljön telepítésre. [POSTMAN Download](https://www.postman.com/downloads/)
 2. Szerver indítása
-   - A projekt telepítése után bontsuk ki a tömörített fájlt (ha szükséges), majd a projekt mappában egy terminált nyitva telepítsük a projekt függőségeit `npm install` paranccsal, majd `npm start`-al elindíthatjuk a szervert ami a megadott fog porton hallgatni.
-   - Ha 
+   - A projekt telepítése után bontsuk ki a tömörített fájlt (ha szükséges), majd a projekt mappában egy terminált nyitva telepítsük a projekt függőségeit `npm install` paranccsal, majd `npm start`-al elindíthatjuk a szervert ami a megadott porton fog hallgatni.
+   - Ha a szerver sikeresen elindult akkor a konzolban értesítést kapunk erről.
