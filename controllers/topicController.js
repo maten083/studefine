@@ -72,7 +72,12 @@ const getTopicById = async (req, res) => {
         const dbManager = new DbManager();
         const topic = await dbManager.getTopic(req.params?.id);
 
-        res.status(200).json(topic);
+        if (!topic){
+            res.status(404).json({error: "Nem létezik ilyen topic"})
+        }
+        else {
+            res.status(200).json(topic);
+        }
     } catch (err) {
         res.status(500).json({error: err.message})
     }
@@ -88,7 +93,13 @@ const updateTopic = async (req, res) => {
         console.log("name:", name, definition, id)
         const updatedTopic = await dbManager.updateTopic(name,definition,id);
 
-        res.status(200).json(updatedTopic);
+        const existingTopic = await dbManager.getUserById(id);
+        if (!existingTopic){
+            res.status(404).json({error: "Nem létezik ilyen topic"})
+        }
+        else{
+            res.status(200).json(updatedTopic);
+        }
     } catch (err) {
         res.status(500).json({error: err.message})
     }

@@ -59,6 +59,8 @@ class DbManager {
         }
 
         try {
+
+            // USERS =================================================
             let createTableQuery = `CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(100) UNIQUE NOT NULL,
@@ -82,6 +84,7 @@ class DbManager {
             await this.#pool.query(createTableQuery);
             console.log("membership kapcsolat tábla létrehozva");
 
+            // TOPICS =================================================
             createTableQuery = `CREATE TABLE IF NOT EXISTS topics (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
@@ -104,7 +107,7 @@ class DbManager {
             await this.#pool.query(createTableQuery);
             console.log("topic_relation kapcsolat tábla létrehozva");
 
-            /** phrases **/
+            // PHRASES =================================================
             createTableQuery = `CREATE TABLE IF NOT EXISTS phrases (
                   id SERIAL PRIMARY KEY,
                   name VARCHAR(100) NOT NULL,
@@ -236,6 +239,13 @@ class DbManager {
         const query =
             "INSERT INTO phrases(name, definition) VALUES ($1, $2) RETURNING * ";
         const result = await this.query(query, [name, definition]);
+        return result.rows[0];
+    }
+
+    async updatePhrase(newName, newDefinition, id) {
+        const query =
+            "UPDATE phrases SET name = $1 , definition  = $2 WHERE id = $3 RETURNING *";
+        const result = await this.query(query, [newName, newDefinition, id]);
         return result.rows[0];
     }
 

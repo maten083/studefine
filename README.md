@@ -21,3 +21,7 @@
      1. Fontos, hogy a felhasználó be legyen jelentkezve POSTMAN-be és ezáltal az összes funkcióját tudja hassználni.
      2. A Git mappában található egy `studefinde.postman_collection.json` fájl ami teszt adatokat tartalmaz a programhoz (ez egy postman collection).
      3. A Postman-be belépve importáljuk ezt a fájlt, ezután meg fog jelenni a collection-ben található összes HTTP kérés amivel már tudunk tesztelni.
+## Tesztesetek
+### 1. Felhasználói műveletek
+### 2. Topic
+### 3. Phrase

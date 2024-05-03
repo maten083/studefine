@@ -15,8 +15,8 @@ app.use(cors({origin:'http://localhost:3000'}))
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const topicRoutes = require('./routes/topicRoutes');
-//const phraseRoutes = require('./routes/phraseRoutes');
-//const plainDefinitionRoutes = require('./routes/plainDefinitionRoutes');
+const phraseRoutes = require('./routes/phraseRoutes');
+const plainDefinitionRoutes = require('./routes/plainDefinitionRoutes');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,11 +27,12 @@ app.get('/',(req, res)=>{
     res.send('GET endpoint - welcome');
 });
 
-app.use('/auth', authRoutes); //Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
+//Elérési útvonalak megadása a HOST-on / modul meghívva a fő fájlban
+app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/topics',topicRoutes);
-//app.use('/phrases',phraseRoutes);
-//app.use('/plainDefinition',plainDefinitionRoutes);
+app.use('/phrases',phraseRoutes);
+app.use('/plainDefinition',plainDefinitionRoutes);
 
 app.listen(port, ()=> {
     console.log(`A szerver itt fut--> http://localhost:${port}`)
