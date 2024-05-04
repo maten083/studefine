@@ -17,6 +17,7 @@ const userRoutes = require('./routes/userRoutes');
 const topicRoutes = require('./routes/topicRoutes');
 const phraseRoutes = require('./routes/phraseRoutes');
 const plainDefinitionRoutes = require('./routes/plainDefinitionRoutes');
+const groupRoutes = require('./routes/groupRoute');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,6 +34,7 @@ app.use('/user', userRoutes);
 app.use('/topics',topicRoutes);
 app.use('/phrases',phraseRoutes);
 app.use('/plainDefinition',plainDefinitionRoutes);
+app.use('/groups',groupRoutes);
 
 app.listen(port, ()=> {
     console.log(`A szerver itt fut--> http://localhost:${port}`)

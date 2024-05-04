@@ -79,7 +79,8 @@ class DbManager {
 
             createTableQuery = `CREATE TABLE IF NOT EXISTS membership (
                 user_id SERIAL REFERENCES users(id),
-                group_id SERIAL REFERENCES groups(id)
+                group_id SERIAL REFERENCES groups(id),
+                admin BOOLEAN
             )`;
             await this.#pool.query(createTableQuery);
             console.log("membership kapcsolat tábla létrehozva");
@@ -178,6 +179,104 @@ class DbManager {
         return result.rows.length === 0;
     }
 
+    /**
+     * Ellenőrzi, hogy szabad-e a jelenlegi csoportnév
+     * @param {string} name a csoport neve
+     * @returns {Promise<boolean>} true ha szabad a felhasználónév, false ha már foglalt
+     */
+    async checkGroupName(name) {
+        const query = "SELECT id FROM groups WHERE name = $1";
+        const result = await this.query(query, [name]);
+
+        return result.rows.length === 0;
+    }
+
+    // Csoport műveletek
+    /**
+     * Létrehoz egy csoportot, és adminisztrátorrá teszi
+     *
+     * @param {number} userId a felhasználó azonosítója
+     * @param {string} name a csoport neve
+     * @returns {Promise<void>}
+     */
+    async createGroup(userId, name) {
+        let query =
+            "INSERT INTO groups (name) VALUES ($1) RETURNING id";
+        const result = await this.query(query, [name]);
+
+        query =
+            "INSERT INTO membership (user_id, group_id, admin) VALUES ($1, $2, $3)";
+        await this.query(query, [userId, result.rows[0].id, true]);
+    }
+
+    /**
+     * Egy adott csoport lekérése ID alapján
+     *
+     * @param {number} groupId A csoport ID-je
+     * @returns {Promise<any>}
+     */
+    async getGroupById(groupId) {
+        const query =
+            "SELECT * FROM groups WHERE id = $1";
+
+        return (await this.query(query, [groupId])).rows;
+    }
+
+    async getAllGroups() {
+        const query =
+            "SELECT * FROM groups";
+
+        return (await this.query(query)).rows;
+    }
+
+    /**
+     * Egy csoport törlése az adatbázisból
+     * @param {number} userId a felhasználó azonosítója
+     * @param {number} groupId a csoport azonosítója
+     * @returns {Promise<boolean>} igaz, ha sikerült a törlés, hamis, ha a felhasznál nem admin
+     */
+    async deleteGroup(userId, groupId) {
+        let query =
+            "SELECT admin FROM membership WHERE user_id = $1 AND group_id = $2";
+        const result = await this.query(query, [userId, groupId]);
+
+        if (!result.rows[0].admin) {
+            return false;
+        }
+
+        query =
+            "DELETE FROM membership WHERE group_id = $1";
+        await this.query(query, [groupId]);
+
+        query =
+            "DELETE FROM groups WHERE id = $1";
+        await this.query(query, [groupId]);
+
+        return true;
+    }
+
+    /**
+     * Felhasználó csatlakoztatása egy csoprotba
+     * @param {number} userId a felhasználó azonosítója
+     * @param {number} groupId a csoport azonosítója
+     * @returns {Promise<boolean>} igaz, ha sikerült a csatlakozás, hamis, ha a felhasznál már csatlakozva van
+     */
+    async joinGroup(userId, groupId) {
+        let query =
+            "SELECT user_id FROM membership WHERE user_id = $1 AND group_id = $2";
+        const result = await this.query(query, [userId, groupId]);
+
+        if (result.rows.length !== 0) {
+            return false;
+        }
+
+        query =
+            "INSERT INTO membership (user_id, group_id, admin) VALUES ($1, $2, $3)";
+        await this.query(query, [userId, groupId, false]);
+
+        return true;
+    }
+
     // User műveletek
     async createUser(username, email, password) {
         const query =
@@ -197,6 +296,20 @@ class DbManager {
         const result = await this.query(query, [id]);
         return result.rows[0];
     }
+
+    /**
+     * Az adott felhasználó csoportjainak lekérése
+     *
+     * @param {number} userId A felhasználó ID-je
+     * @returns {Promise<any[]>}
+     */
+    async getUserGroups(userId) {
+        const query =
+            "SELECT * FROM membership LEFT JOIN groups ON membreship.group_id = groups.id WHERE membership.user_id = $1";
+
+        return (await this.query(query, [userId])).rows;
+    }
+
 
     //Topic műveletek
 
