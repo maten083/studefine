@@ -55,14 +55,24 @@ const getGroupById = async (req, res) => {
 // done
 const joinGroup = async (req, res) => {
     try {
+        if (typeof req.user === "undefined" || req.user === null
+            || typeof req.user.id === "undefined" || req.user.id === null) {
+            throw new Error("Hiányzó felhasználó.");
+        }
+
+        if (typeof req.body.id === "undefined" || req.body.id === null) {
+            throw new Error("Hiányzó csoport azonosító.");
+        }
 
         const dbManager = new DbManager();
+        const userId = req.user.id;
+        const groupId = req.body.id;
+
         if (!(await dbManager.joinGroup(req.user.id, req.body.id))) {
             throw new Error("Már csatlakoztál ehhez a csoporthoz.");
         }
 
-
-        return res.status(200).json({ ...user, token: token });
+        return res.status(200).json(`A ID:${userId} felhasználó sikeresen csatlakozott a ID:${groupId} csoporthoz`);
 
     } catch (err){
         res.status(500).json({ error: err.message });
