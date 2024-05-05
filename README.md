@@ -42,3 +42,9 @@
      - Phrase kiolvasása - név: `GET Phrase` url: http://localhost:8080/phrases/:id
      - Update Phrase - név: `PUT update Phrase` url: http://localhost:8080/phrases/:id
      - plainDefinition létrehozása - név: `POST create plainDef to Phrase` url: http://localhost:8080/plainDefinition/:id
+   - A Group műveleteknél alkalmazok token validálást, így annyiban változik a helyzet, hogy az Authorization fülnél kiválasztjuk a Bearer Token lehetőséget, majd a token helyére beillesztjük a bejelentkezett felhasználó valid tokenjét. Abban az esetben ha nem találjuk ezt a tokent, akkor jelentkezzünk be a kívánt adatokkal egy login kéréssel - ez vissza fogja adni a teljes bejelentkezett felhasználót, és az aktív tokenjét is. Ezt a tokent másoljuk ki és illesszük be a Bearer Token-hez. Ezután már tudunk kéréseket végrehajtani, mert bevittük az aktív token értékét.
+     - create Group - név: `Csoport létrehozása` url: http://localhost:8080/groups/create - aktív token és body: name paramétereket vár
+     - delete Group - név: `Csoport törlése` url: http://localhost:8080/groups/:id - aktív token és params: id paramétereket vár
+     - Join Group - név: `Csoporthoz csatlakozás` url: http://localhost:8080/groups/join - aktív token és body: id paramétereket vár
+     - Get Group - név: `Összes csoport` url: http://localhost:8080/groups/ 
+     - Get Group by ID - név: `csoport by Id` url: http://localhost:8080/groups/:id - params: id vár paraméternek
